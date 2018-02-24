@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="galua.audio.newaudioplayer.MainActivity">
+    <item
+        android:id="@+id/author_menu"
+        android:orderInCategory="101"
+        android:title="Об авторе"
+        app:showAsAction="never" />
+</menu>
