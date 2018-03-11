@@ -3,6 +3,10 @@ package galua.audio.audioplayer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -10,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -389,6 +394,7 @@ public class Main extends ListActivity implements MediaPlayer.OnCompletionListen
         return currentSongIndex;
     }
 
+
     public void  playSong(int songIndex){
         // Play song
         try {
@@ -403,6 +409,26 @@ public class Main extends ListActivity implements MediaPlayer.OnCompletionListen
                 mp.setDataSource(songsList.get(songIndex).get("songPath"));
                 mp.prepare();
                 mp.start();
+
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this);
+
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+                mBuilder.setContentIntent(pendingIntent);
+
+                mBuilder.setSmallIcon(R.drawable.music_player_logo);
+                mBuilder.setContentTitle("Сейчас играет:");
+                mBuilder.setContentText(songsList.get(songIndex).get("songTitle"));
+
+                NotificationManager mNotificationManager =
+
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                mNotificationManager.notify(001, mBuilder.build());
+
                 // Displaying Song title
                 String songTitle = songsList.get(songIndex).get("songTitle");
                 songTitleLabel.setText(songTitle);

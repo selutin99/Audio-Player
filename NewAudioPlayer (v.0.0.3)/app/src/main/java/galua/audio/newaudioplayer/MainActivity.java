@@ -1,9 +1,15 @@
 package galua.audio.newaudioplayer;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaPlayer;
@@ -16,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     ListView listView;
 
     ListAdapter adapter;
+
+    Notification.Builder mBuilder;
+    Intent resultIntent;
+    PendingIntent pendingIntent;
+    NotificationManager mNotificationManager;
 
     /*********************VIEWS*********************/
     private ImageButton btnPlay;
@@ -130,11 +142,13 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
                     if (mp.isPlaying()) {
                         if (mp != null) {
                             mp.pause();
+                            mNotificationManager.cancel(1);
                             btnPlay.setImageResource(android.R.drawable.ic_media_play);
                         }
                     } else {
                         if (mp != null) {
                             mp.start();
+                            notification(currentSongIndex);
                             btnPlay.setImageResource(android.R.drawable.ic_media_pause);
                         }
                     }
@@ -350,6 +364,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         }
     }
 
+    @SuppressLint("NewApi")
     public void  playSong(int songIndex){
         try {
             if(!songsList.isEmpty()) {
@@ -363,6 +378,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
                 mp.setDataSource(songsList.get(songIndex).get("songPath"));
                 mp.prepare();
                 mp.start();
+
+                notification(songIndex);
 
                 String songTitle = songsList.get(songIndex).get("songTitle");
                 songTitleLabel.setText(songTitle);
@@ -381,6 +398,26 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @SuppressLint("NewApi")
+    private void notification(int currentSongIndexg){
+        mBuilder =
+                new Notification.Builder(this)
+                        .setSmallIcon(R.drawable.ic_note)
+                        .setContentTitle("Сейчас играет:")
+                        .setContentText(songsList.get(currentSongIndexg).get("songTitle"));
+
+        resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.setAction(Intent.ACTION_MAIN);
+        resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, 0);
+
+        mBuilder.setContentIntent(pendingIntent);
+        mNotificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1, mBuilder.build());
     }
 
     @Override
@@ -489,9 +526,27 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     };
 
     @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Выход из приложения")
+                .setMessage("Вы уверены, что хотите выйти?")
+                .setPositiveButton("Да", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onDestroy();
+                    }
+
+                })
+                .setNegativeButton("Нет", null)
+                .show();
+    }
+
+    @Override
     public void onDestroy(){
         super.onDestroy();
         mp.release();
+        mNotificationManager.cancel(1);
         System.exit(0);
     }
 }
