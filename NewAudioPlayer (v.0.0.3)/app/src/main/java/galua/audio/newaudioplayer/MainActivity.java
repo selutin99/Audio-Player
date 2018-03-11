@@ -545,8 +545,22 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     @Override
     public void onDestroy(){
         super.onDestroy();
-        mp.release();
-        mNotificationManager.cancel(1);
-        System.exit(0);
+        if(mp!=null&&mNotificationManager!=null) {
+            mp.release();
+            mNotificationManager.cancel(1);
+            System.exit(0);
+        }
+        else if(mp==null&&mNotificationManager!=null){
+            mNotificationManager.cancel(1);
+            System.exit(0);
+        }
+        else if(mp!=null&&mNotificationManager==null){
+            mp.release();
+            System.exit(0);
+        }
+        else{
+            System.exit(0);
+        }
+
     }
 }
