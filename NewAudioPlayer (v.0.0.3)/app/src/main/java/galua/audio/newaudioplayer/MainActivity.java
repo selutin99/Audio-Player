@@ -61,6 +61,12 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     PendingIntent pendingIntent;
     NotificationManager mNotificationManager;
 
+    private final static String PREVIOUS_ACTION = "PreviousSong";
+    private final static String NEXT_ACTION = "NextSong";
+    private final static String STOP_ACTION = "StopPlay";
+
+    public boolean isHome = false;
+
     /*********************VIEWS*********************/
     private ImageButton btnPlay;
     private ImageButton btnForward;
@@ -400,13 +406,111 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         }
     }
 
+    private Intent getNotificationIntent(){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        return intent;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent){
+        processIntentAction(intent);
+        super.onNewIntent(intent);
+    }
+
+    private void processIntentAction(Intent intent){
+        if(intent.getAction()!=null){
+            switch(intent.getAction()){
+                case PREVIOUS_ACTION:
+                    if(songTitleLabel.getText().equals("Мелодия не выбрана") && !songsList.isEmpty()){
+                        playSong(0);
+                    }
+                    else if(songsList.isEmpty()){
+
+                    }
+                    else {
+                        if (currentSongIndex > 0) {
+                            playSong(currentSongIndex - 1);
+                            currentSongIndex = currentSongIndex - 1;
+                        } else {
+                            playSong(songsList.size() - 1);
+                            currentSongIndex = songsList.size() - 1;
+                        }
+                    }
+                    Intent showOptions0 = new Intent(Intent.ACTION_MAIN);
+                    showOptions0.addCategory(Intent.CATEGORY_HOME);
+                    startActivity(showOptions0);
+                    break;
+                case NEXT_ACTION:
+                    if(songTitleLabel.getText().equals("Мелодия не выбрана") && !songsList.isEmpty()){
+                        playSong(0);
+                    }
+                    else if(songsList.isEmpty()){
+
+                    }
+                    else {
+                        if (currentSongIndex < (songsList.size() - 1)) {
+                            playSong(currentSongIndex + 1);
+                            currentSongIndex = currentSongIndex + 1;
+                        } else {
+                            playSong(0);
+                            currentSongIndex = 0;
+                        }
+                    }
+                    Intent showOptions1 = new Intent(Intent.ACTION_MAIN);
+                    showOptions1.addCategory(Intent.CATEGORY_HOME);
+                    startActivity(showOptions1);
+                    break;
+                case STOP_ACTION:
+                    if(songTitleLabel.getText().equals("Мелодия не выбрана") && !songsList.isEmpty()){
+                        playSong(0);
+                    }
+                    else if(songsList.isEmpty()){
+                    }
+                    else {
+                        if (mp.isPlaying()) {
+                            if (mp != null) {
+                                mp.pause();
+                                mNotificationManager.cancel(1);
+                                btnPlay.setImageResource(android.R.drawable.ic_media_play);
+                            }
+                        } else {
+                            if (mp != null) {
+                                mp.start();
+                                notification(currentSongIndex);
+                                btnPlay.setImageResource(android.R.drawable.ic_media_pause);
+                            }
+                        }
+                    }
+                    Intent showOptions2 = new Intent(Intent.ACTION_MAIN);
+                    showOptions2.addCategory(Intent.CATEGORY_HOME);
+                    startActivity(showOptions2);
+                    break;
+            }
+        }
+    }
+
     @SuppressLint("NewApi")
-    private void notification(int currentSongIndexg){
+    private void notification(int currentSongIndex){
+
+        Intent prevIntent = getNotificationIntent();
+        prevIntent.setAction(PREVIOUS_ACTION);
+
+        Intent nextIntent = getNotificationIntent();
+        nextIntent.setAction(NEXT_ACTION);
+
+        Intent stopIntent = getNotificationIntent();
+        stopIntent.setAction(STOP_ACTION);
+
         mBuilder =
                 new Notification.Builder(this)
                         .setSmallIcon(R.drawable.ic_note)
                         .setContentTitle("Сейчас играет:")
-                        .setContentText(songsList.get(currentSongIndexg).get("songTitle"));
+                        .setContentText(songsList.get(currentSongIndex).get("songTitle"))
+                        .setOngoing(true)
+                        .addAction(android.R.drawable.ic_media_rew,"Пред.",PendingIntent.getActivity(this,0,prevIntent,PendingIntent.FLAG_CANCEL_CURRENT))
+                        .addAction(android.R.drawable.ic_delete, "Стоп",PendingIntent.getActivity(this,0,stopIntent,PendingIntent.FLAG_CANCEL_CURRENT))
+                        .addAction(android.R.drawable.ic_media_ff,"След.",PendingIntent.getActivity(this,0,nextIntent,PendingIntent.FLAG_CANCEL_CURRENT));
 
         resultIntent = new Intent(this, MainActivity.class);
         resultIntent.setAction(Intent.ACTION_MAIN);
@@ -418,6 +522,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         mNotificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, mBuilder.build());
+        isHome = false;
     }
 
     @Override
@@ -453,6 +558,14 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         if (id == R.id.author_menu) {
             openSiteDialog();
             return true;
+        }
+        else if(id == R.id.main_menu){
+            return true;
+        }
+        else if(id == R.id.settings_menu){
+            Intent set = new Intent(this, Settings.class);
+            set.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(set);
         }
 
         return super.onOptionsItemSelected(item);

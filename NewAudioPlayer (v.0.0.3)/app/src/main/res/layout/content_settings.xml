@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="galua.audio.newaudioplayer.Settings"
+    tools:showIn="@layout/activity_settings"
+    android:orientation="vertical"
+    android:background="#515151">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Громкость:"
+
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:layout_marginBottom="15dp"/>
+
+        <SeekBar
+            android:id="@+id/SeekBarVolume"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="100"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Тема приложения:"
+
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:layout_marginBottom="15dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Тёмная"
+                android:textColor="#fff"
+                android:layout_marginRight="20dp"/>
+
+            <Switch
+                android:id="@+id/SwitchDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Светлая"
+                android:textColor="#fff"
+                android:layout_marginRight="20dp"/>
+
+            <Switch
+                android:id="@+id/SwitchLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подключить ВК:"
+
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:layout_marginBottom="15dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/VKButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Подключить"
+                android:textColor="#fff"
+                android:padding="10dp"
+                android:background="@drawable/rounded_button"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

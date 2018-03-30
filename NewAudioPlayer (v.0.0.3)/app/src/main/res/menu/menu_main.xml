@@ -3,8 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="galua.audio.newaudioplayer.MainActivity">
     <item
+        android:id="@+id/main_menu"
+        android:orderInCategory="100"
+        android:title="Главная"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/author_menu"
         android:orderInCategory="101"
         android:title="Об авторе"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/settings_menu"
+        android:orderInCategory="102"
+        android:title="Настройки"
         app:showAsAction="never" />
 </menu>
