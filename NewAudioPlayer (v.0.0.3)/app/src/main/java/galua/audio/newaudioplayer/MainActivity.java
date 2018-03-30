@@ -16,6 +16,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -658,6 +659,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     @Override
     public void onDestroy(){
         super.onDestroy();
+        finish();
         if(mp!=null&&mNotificationManager!=null) {
             mp.release();
             mNotificationManager.cancel(1);
