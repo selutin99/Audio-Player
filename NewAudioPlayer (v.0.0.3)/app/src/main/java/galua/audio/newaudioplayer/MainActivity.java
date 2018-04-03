@@ -10,8 +10,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -68,6 +71,12 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
 
     public boolean isHome = false;
 
+
+    public static boolean isAppWentToBg = false;
+    public static boolean isWindowFocused = false;
+    public static boolean isMenuOpened = false;
+    public static boolean isBackPressed = false;
+
     /*********************VIEWS*********************/
     private ImageButton btnPlay;
     private ImageButton btnForward;
@@ -91,6 +100,25 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     private boolean isShuffle = false;
     private boolean isRepeat = false;
     /*******************END VIEWS*********************/
+    LinearLayout controlLayout;
+
+    private void applicationWillEnterForeground() {
+        if (isAppWentToBg) {
+            isAppWentToBg = false;
+        }
+    }
+
+    public void applicationdidenterbackground() {
+        if (!isWindowFocused) {
+            isAppWentToBg = true;
+        }
+    }
+
+    @Override
+    protected void onStart(){
+        applicationWillEnterForeground();
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +126,17 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        applicationWillEnterForeground();
+
+        controlLayout = (LinearLayout) findViewById(R.id.controlsLayout);
+
+        if(Preferences.getDefaults("THEME",getApplicationContext())){
+            controlLayout.setBackgroundColor(Color.parseColor("#C7C7C7"));
+        }
+        else{
+            controlLayout.setBackgroundColor(Color.parseColor("#434141"));
+        }
 
         // Все кнопки
         btnPlay = (ImageButton) findViewById(R.id.play);
@@ -438,9 +477,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
                             currentSongIndex = songsList.size() - 1;
                         }
                     }
-                    Intent showOptions0 = new Intent(Intent.ACTION_MAIN);
-                    showOptions0.addCategory(Intent.CATEGORY_HOME);
-                    startActivity(showOptions0);
+                    if(isAppWentToBg) {
+                        Intent showOptions0 = new Intent(Intent.ACTION_MAIN);
+                        showOptions0.addCategory(Intent.CATEGORY_HOME);
+                        startActivity(showOptions0);
+                    }
                     break;
                 case NEXT_ACTION:
                     if(songTitleLabel.getText().equals("Мелодия не выбрана") && !songsList.isEmpty()){
@@ -458,9 +499,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
                             currentSongIndex = 0;
                         }
                     }
-                    Intent showOptions1 = new Intent(Intent.ACTION_MAIN);
-                    showOptions1.addCategory(Intent.CATEGORY_HOME);
-                    startActivity(showOptions1);
+                    if(isAppWentToBg) {
+                        Intent showOptions1 = new Intent(Intent.ACTION_MAIN);
+                        showOptions1.addCategory(Intent.CATEGORY_HOME);
+                        startActivity(showOptions1);
+                    }
                     break;
                 case STOP_ACTION:
                     if(songTitleLabel.getText().equals("Мелодия не выбрана") && !songsList.isEmpty()){
@@ -483,9 +526,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
                             }
                         }
                     }
-                    Intent showOptions2 = new Intent(Intent.ACTION_MAIN);
-                    showOptions2.addCategory(Intent.CATEGORY_HOME);
-                    startActivity(showOptions2);
+                    if(isAppWentToBg) {
+                        Intent showOptions2 = new Intent(Intent.ACTION_MAIN);
+                        showOptions2.addCategory(Intent.CATEGORY_HOME);
+                        startActivity(showOptions2);
+                    }
                     break;
             }
         }
@@ -561,6 +606,7 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
             return true;
         }
         else if(id == R.id.main_menu){
+            onBackPressed();
             return true;
         }
         else if(id == R.id.settings_menu){
@@ -641,6 +687,11 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
 
     @Override
     public void onBackPressed() {
+        if (this instanceof MainActivity) {
+
+        } else {
+            isBackPressed = true;
+        }
         new AlertDialog.Builder(this)
                 .setTitle("Выход из приложения")
                 .setMessage("Вы уверены, что хотите выйти?")
@@ -654,6 +705,22 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
                 })
                 .setNegativeButton("Нет", null)
                 .show();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        isWindowFocused = hasFocus;
+        if (isBackPressed && !hasFocus) {
+            isBackPressed = false;
+            isWindowFocused = true;
+        }
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        applicationdidenterbackground();
     }
 
     @Override

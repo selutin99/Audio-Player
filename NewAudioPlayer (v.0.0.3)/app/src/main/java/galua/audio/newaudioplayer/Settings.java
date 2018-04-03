@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -30,6 +31,10 @@ public class Settings extends AppCompatActivity {
     Switch light;
     Switch dark;
 
+    LinearLayout mainL;
+
+    Intent starterIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,16 +42,30 @@ public class Settings extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         light = (Switch) findViewById(R.id.SwitchLight);
         dark = (Switch) findViewById(R.id.SwitchDark);
+
+        mainL = (LinearLayout) findViewById(R.id.settingsLayout);
+
+        if(Preferences.getDefaults("THEME",getApplicationContext())) {
+            light.setChecked(true);
+            dark.setChecked(false);
+        }
+        else{
+            light.setChecked(false);
+            dark.setChecked(true);
+        }
 
         light.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 light.setChecked(true);
                 dark.setChecked(false);
-                Toast.makeText(getApplicationContext(),"Как только так сразу",Toast.LENGTH_SHORT).show();
+
+
+                Preferences.setDefaults("THEME",true,getApplicationContext());
+                Toast.makeText(getApplicationContext(),"Изменения вступят в силу\nпосле перезагрузки приложения",Toast.LENGTH_SHORT).show();
+
             }
         });
         dark.setOnClickListener(new View.OnClickListener() {
@@ -54,9 +73,19 @@ public class Settings extends AppCompatActivity {
             public void onClick(View v) {
                 dark.setChecked(true);
                 light.setChecked(false);
-                Toast.makeText(getApplicationContext(),"Как только так сразу",Toast.LENGTH_SHORT).show();
+
+
+                Preferences.setDefaults("THEME",false,getApplicationContext());
+                Toast.makeText(getApplicationContext(),"Изменения вступят в силу\nпосле перезагрузки приложения",Toast.LENGTH_SHORT).show();
             }
         });
+
+        if(Preferences.getDefaults("THEME",getApplicationContext())){
+            mainL.setBackgroundColor(Color.parseColor("#C7C7C7"));
+        }
+        else{
+            mainL.setBackgroundColor(Color.parseColor("#515151"));
+        }
 
         seekBarVolume = (SeekBar)findViewById(R.id.SeekBarVolume);
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
