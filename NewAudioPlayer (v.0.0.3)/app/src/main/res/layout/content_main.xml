@@ -14,14 +14,14 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:background="#515151"
+        android:background="#0d0c63"
         android:divider="#ffffff" />
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/controlsLayout"
-        android:background="#434141"
+        android:background="#131638"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -71,6 +71,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/firstButtonsLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="#434141"
@@ -98,6 +99,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/secondButtonsLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="#434141"

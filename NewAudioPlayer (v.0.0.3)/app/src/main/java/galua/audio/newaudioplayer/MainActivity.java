@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
     private boolean isRepeat = false;
     /*******************END VIEWS*********************/
     LinearLayout controlLayout;
+    LinearLayout first,second,item;
+
 
     private void applicationWillEnterForeground() {
         if (isAppWentToBg) {
@@ -129,14 +131,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
 
         applicationWillEnterForeground();
 
-        controlLayout = (LinearLayout) findViewById(R.id.controlsLayout);
-
-        if(Preferences.getDefaults("THEME",getApplicationContext())){
-            controlLayout.setBackgroundColor(Color.parseColor("#C7C7C7"));
-        }
-        else{
-            controlLayout.setBackgroundColor(Color.parseColor("#434141"));
-        }
 
         // Все кнопки
         btnPlay = (ImageButton) findViewById(R.id.play);
@@ -150,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         songTitleLabel = (TextView) findViewById(R.id.selectedfile);
         songCurrentDurationLabel = (TextView) findViewById(R.id.currentTime);
         songTotalDurationLabel = (TextView) findViewById(R.id.totalTime);
+
+        listView = (ListView) findViewById(R.id.listView);
         // Конец все кнопки
 
         mp = new MediaPlayer();
@@ -173,6 +169,29 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
         }
         else{
             doStuff();
+        }
+
+
+        controlLayout = (LinearLayout) findViewById(R.id.controlsLayout);
+        first = (LinearLayout) findViewById(R.id.firstButtonsLayout);
+        second = (LinearLayout) findViewById(R.id.secondButtonsLayout);
+        item = (LinearLayout) findViewById(R.id.timerDisplay);
+
+        if(Preferences.getDefaults("THEME",getApplicationContext())){
+            controlLayout.setBackgroundColor(Color.parseColor("#131638"));
+            first.setBackgroundColor(Color.parseColor("#131638"));
+            second.setBackgroundColor(Color.parseColor("#131638"));
+
+            item.setBackgroundColor(Color.parseColor("#131638"));
+            listView.setBackgroundColor(Color.parseColor("#0d0c63"));
+        }
+        else{
+            controlLayout.setBackgroundColor(Color.parseColor("#434141"));
+            first.setBackgroundColor(Color.parseColor("#434141"));
+            second.setBackgroundColor(Color.parseColor("#434141"));
+
+            item.setBackgroundColor(Color.parseColor("#434141"));
+            listView.setBackgroundColor(Color.parseColor("#515151"));
         }
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -606,7 +625,6 @@ public class MainActivity extends AppCompatActivity implements MediaPlayer.OnCom
             return true;
         }
         else if(id == R.id.main_menu){
-            onBackPressed();
             return true;
         }
         else if(id == R.id.settings_menu){

@@ -81,7 +81,7 @@ public class Settings extends AppCompatActivity {
         });
 
         if(Preferences.getDefaults("THEME",getApplicationContext())){
-            mainL.setBackgroundColor(Color.parseColor("#C7C7C7"));
+            mainL.setBackgroundColor(Color.parseColor("#181c48"));
         }
         else{
             mainL.setBackgroundColor(Color.parseColor("#515151"));
@@ -140,7 +140,6 @@ public class Settings extends AppCompatActivity {
             Intent main = new Intent(this, MainActivity.class);
             main.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(main);
-            finish();
             return true;
         }
 
