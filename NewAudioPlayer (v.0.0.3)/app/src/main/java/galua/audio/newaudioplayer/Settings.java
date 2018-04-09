@@ -140,6 +140,7 @@ public class Settings extends AppCompatActivity {
             Intent main = new Intent(this, MainActivity.class);
             main.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(main);
+            finish();
             return true;
         }
 
